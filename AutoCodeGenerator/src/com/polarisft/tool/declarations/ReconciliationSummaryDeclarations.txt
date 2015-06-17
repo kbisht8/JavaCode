@@ -1,0 +1,134 @@
+/*Global Variables*/
+#GLOBAL - STARTS#
+DECLARE @SourceTransactionType CHAR(1)
+DECLARE @SourceODSProcessedDateTime DATETIME
+DECLARE @SourceAS400TransactionDatetime DATETIME
+DECLARE @StagingID BIGINT
+DECLARE @ErrorNumberDateConvertedTemp INT
+DECLARE @ErrorDescriptionDateConverted VARCHAR(100)
+DECLARE @ErrorNumberDateConverted INT
+DECLARE @ErrorText VARCHAR(200)
+DECLARE @CurrentDateTime DATETIME
+DECLARE @ReconFlagSummaryFirstLevelComparison SMALLINT
+DECLARE @ReconFlagSummaryComparison SMALLINT
+/* Variables used for ReconciliationStatusAuditLog Table Insert */
+DECLARE @SerialNumber INT
+DECLARE @SourceTableName VARCHAR(50)
+DECLARE @TargetTableName VARCHAR(50)
+DECLARE @ReconType VARCHAR(50)
+DECLARE @ReconTypeSummaryFirstLevelComparison VARCHAR(50)
+DECLARE @ReconTypeSummaryComparison VARCHAR(50)
+DECLARE @ReconStatus VARCHAR(50)
+DECLARE @ReconStatusMatched VARCHAR(50)
+DECLARE @ReconStatusMisMatch VARCHAR(50)
+DECLARE @ReconStatusNoDataAvailable VARCHAR(50)
+DECLARE @MismatchDescription VARCHAR(MAX)
+DECLARE @LoginName VARCHAR(20)
+DECLARE @ReconExecutionEnded DATETIME
+DECLARE @ProcessedRecordCount INT
+DECLARE @DeletedRecordCount INT
+DECLARE @MismatchedRecordCount INT
+DECLARE @MatchedRecordCount INT
+DECLARE @CheckStagingRecordCount INT
+/* Variables used While Column by Column Summary Mismatch Comparison
+ and the Values are passed to SP_DFC_ReconColumnMismatchInsert procedure to Insert ReconciliationMismatchDetail Table */
+DECLARE @Remarks VARCHAR(50)
+DECLARE @SourceTableColumnName VARCHAR(100)
+DECLARE @SourceTableColumnValue NVARCHAR(Max)
+DECLARE @TargetTableColumnName VARCHAR(100)
+DECLARE @TargetTableColumnValue NVARCHAR(Max)
+/*Variables for Error Log Generation */
+DECLARE @TextFileStagingIDText  VARCHAR(100)
+DECLARE @TextFileProcessedDatetimeText VARCHAR(100)
+DECLARE @TextFileStagingTableText VARCHAR(100)
+DECLARE @TextFileErrorcodeText VARCHAR(100)
+DECLARE @TextFileErrordescriptionText VARCHAR(100)
+DECLARE @TextFileEndText VARCHAR(150)
+DECLARE @TextFileSeparator VARCHAR(150)
+DECLARE @TextMessage VARCHAR(5000)
+DECLARE @ShortSpacing VARCHAR(5)
+DECLARE @ErrorPrefix VARCHAR(25)      /* To Prefix Error Messages with value 'ReconciliationSummary:' */
+DECLARE @ErrorMessage VARCHAR(1000)   /* To Capture SQL Error Message ERROR_MESSAGE() */
+DECLARE @TextFileBeginingText VARCHAR(30)
+/* Variables used While Column by Column Summary Mismatch Comparison */
+DECLARE @TempODSTargetCount INT
+DECLARE @TempODSProcessedDateTime DATETIME
+DECLARE @TempAS400TransactionDateTime DATETIME
+
+/* Initialize Variables used for ReconciliationStatusAuditLog Table Insert */
+SET @CurrentDateTime = GETDATE()
+SET @ReconFlagSummaryFirstLevelComparison = 1
+  /* Summary-FirstLevelComparison within the Input Date Time Range */
+SET @ReconFlagSummaryComparison = 2
+/* Summary-Comparison From Input StartDateTime Upto Current Datetime */
+SET @ReconStatus = NULL
+SET @ReconStatusMatched = 'Match'
+SET @ReconStatusMisMatch = 'Mismatch'
+SET @ReconStatusNoDataAvailable='No DATA Available for the Date Range'
+SET @ReconType = NULL
+SET @ReconTypeSummaryFirstLevelComparison = 'Summary-FirstLevelComparison'
+SET @ReconTypeSummaryComparison = 'Summary-Comparsion'
+SET @ReconMismatchedRecordCount = 0
+SET @MismatchDescription = NULL
+SET @LoginName = NULL
+SET @ReconExecutionEnded = NULL
+SET @SerialNumber = 0
+SET @ProcessedRecordCount = 0
+SET @DeletedRecordCount = 0
+SET @MismatchedRecordCount = 0
+SET @MatchedRecordCount = 0
+SET @CheckStagingRecordCount = 0
+/*Initialize for Error Log Generation */
+SET @TextFileStagingIDText ='STAGING ID := '
+SET @TextFileProcessedDatetimeText ='PROCESSED DATE TIME := '
+SET @TextFileStagingTableText='STAGING TABLE NAME := '
+SET @TextFileErrorcodeText ='ERROR CODE := '
+SET @TextFileErrordescriptionText ='ERROR DESCRIPTION := '
+SET @TextFileSeparator = ','
+SET @ShortSpacing = SPACE(1)
+SET @ErrorPrefix = 'ReconciliationSummary:'
+SET @ErrorMessage = NULL
+SET @StagingID = NULL      /* For Non-Data Related errors StagingID values should be -1  */
+SET @TextFileBeginingText = '[ERROR]'
+#GLOBAL - ENDS#
+
+/* Initialize Cursor variables */
+#SET1 - STARTS#
+SET @SourceTransactionType = NULL
+SET @SourceODSProcessedDateTime = NULL
+SET @SourceAS400TransactionDatetime = NULL
+#SET1 - ENDS#
+
+/* Initialize variables used in the Loop ( B4 )*/
+#SET2 - STARTS#
+SET @ErrorNumberDateConverted = 0
+SET @ErrorNumberDateConvertedTemp = 0
+SET @ErrorDescriptionDateConverted = NULL
+SET @ErrorText = NULL
+SET @TextMessage = NULL
+#SET2 - ENDS#
+
+/* Declare variables for Column Mismatch Checking ( B15 )*/
+#DECLARE1 - STARTS#
+DECLARE @CurTR_TRANSACTION_DATETIME DATETIME
+DECLARE @CurAS400TransactionDateTime DATETIME
+DECLARE @CurStagingID BIGINT
+#DECLARE1 - ENDS#
+
+/* Initialize variables for Column Mismatch Checking ( B15 )*/
+#SET3 - STARTS#
+SET @CurTR_TRANSACTION_DATETIME = NULL
+SET @CurAS400TransactionDateTime = NULL
+SET @CurStagingID = 0
+#SET3 - ENDS#
+
+/* Initialize variables used in the Loop ( B16 )*/
+#SET4 - STARTS#
+SET @TempODSProcessedDateTime = NULL
+SET @TempAS400TransactionDateTime = NULL
+SET @Remarks = ''
+SET @SourceTableColumnName = ''
+SET @SourceTableColumnValue = ''
+SET @TargetTableColumnName = ''
+SET @TargetTableColumnValue = ''
+#SET4 - ENDS#

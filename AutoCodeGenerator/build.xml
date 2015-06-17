@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="package" name="AutoScriptGenerator">
+
+    <property name="src.dir"          value="src"/>
+    <property name="bin.dir"          value="bin"/>
+    <property name="lib.dir"          value="lib"/>
+    <property name="dist.dir"          value="dist"/>
+    <property name="final.jar"        value="${ant.project.name}.jar"/>
+    <property name="main.class"       value="com.polarisft.tool.impl.trigger.AutoScriptGenerator"/>
+
+    <path id="project.classpath">
+        <fileset dir="${lib.dir}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <!-- convert the libraries to be included in the 
+      Class-Path attribute of the MANIFEST.MF file -->
+    <pathconvert property="manifest.classpath" pathsep=" ">
+        <path refid="project.classpath"/>
+        <flattenmapper/>
+    </pathconvert>
+
+    <target name="clean">
+        <delete dir="${bin.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <target name="cleanall" depends="clean"/>
+
+    <target name="init" depends="cleanall">
+        <mkdir dir="${bin.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${dist.dir}/${ant.project.name}"/>
+    </target>
+
+    <target name="compile" depends="init" >
+        <javac srcdir="${src.dir}" destdir="${bin.dir}" includeantruntime="false"> 
+            <classpath refid="project.classpath"/>
+        </javac>
+    </target> 
+
+    <target name="copy-static-resource">
+        <copy todir="${bin.dir}">
+            <fileset dir="${src.dir}">
+                <include name="com/**"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="jar" depends="compile, copy-static-resource"> 
+        <jar destfile="${dist.dir}/${ant.project.name}/${final.jar}" basedir="${bin.dir}"> 
+            <manifest>
+                <attribute name="Class-Path" value="${manifest.classpath}"/>
+                <attribute name="Main-Class" value="${main.class}" />
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="copy-dependent-jars" depends = "jar">
+        <copy todir="${dist.dir}/${ant.project.name}">
+            <fileset dir="${lib.dir}">
+                <include name="*.jar"/>
+            </fileset>
+        </copy>
+    </target>
+    
+    <target name="package" depends = "copy-dependent-jars">
+        <zip destfile="${dist.dir}/${ant.project.name}.zip">
+            <fileset dir="${dist.dir}/${ant.project.name}">
+                <include name="*"/>
+            </fileset>
+        </zip>
+    </target>
+</project>

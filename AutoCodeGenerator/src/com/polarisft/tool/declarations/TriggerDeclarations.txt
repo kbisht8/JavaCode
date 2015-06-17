@@ -1,0 +1,18 @@
+/*Global Variables*/
+#GLOBAL - STARTS#
+DECLARE @StagingTableName VARCHAR(100)
+DECLARE @ErrorDescription VARCHAR(1000)
+DECLARE @ExecutionBatchSize INT
+DECLARE @StoredProcedureName varchar(100)
+DECLARE @NewRecordPresentFlag CHAR(1)
+DECLARE @RowCount INT
+DECLARE @TextFileSeparator CHAR(1)
+DECLARE @ShortSpacing VARCHAR(5)
+
+SET @ErrorDescription = 'Error While Updating ETLControlTable : - '
+SET @ExecutionBatchSize = 100
+SET @NewRecordPresentFlag = 'N'
+SET @RowCount = 0
+SET @TextFileSeparator = ','
+SET @ShortSpacing = SPACE(1)
+#GLOBAL - ENDS#

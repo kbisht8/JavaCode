@@ -1,0 +1,76 @@
+/* Global Declarations */
+#GLOBAL - STARTS#
+/*Variables for MetaDataFields*/
+DECLARE @SourceTransactionType CHAR(1)
+DECLARE @SourceAS400TransactionDateTime DATETIME
+DECLARE @StagingID BIGINT
+DECLARE @TargetAS400TransationDateTime DATETIME
+DECLARE @DeleteAS400TransactionDateTime DATETIME
+DECLARE @ODSProcessedDateTime DATETIME
+/*Variables for Looping and Constant Values */
+DECLARE @ODSRecordExists CHAR(1)
+DECLARE @ODSDeletedRecordExists CHAR(1)
+DECLARE @TempTableCount INT
+DECLARE @LoopCount INT
+DECLARE @IsRecordPresent BIT
+DECLARE @LateArrivingMessage VARCHAR(100)
+DECLARE @LateArrivingErrorCode VARCHAR(10)
+DECLARE @ODSActionErrorCode VARCHAR(10)
+DECLARE @ODSActionErrorMessage VARCHAR(1000)
+DECLARE @SourceTableName VARCHAR(50)
+DECLARE @ODSActionFlag VARCHAR(6)
+DECLARE @GetInitialValueFlag CHAR(1)
+DECLARE @FinalErrorInsert CHAR(1)
+DECLARE @EntireRollback CHAR(1)
+DECLARE @ODSDeleteFlag CHAR(1)
+DECLARE @SourceOtherTransactionType BIT
+DECLARE @ErrorNumberOtherTransactionType  VARCHAR(10)
+DECLARE @ErrorMessageOtherTransactionType VARCHAR(1000)
+/*Variables for Error log Generation */
+DECLARE @ShortSpacing VARCHAR(5)
+DECLARE @TextMessage VARCHAR(5000)
+DECLARE @TextFileBeginingText VARCHAR(30)
+DECLARE @TextFileStagingIDText  VARCHAR(100)
+DECLARE @TextFileProcessedDatetimeText VARCHAR(100)
+DECLARE @TextFileStagingTableText VARCHAR(100)
+DECLARE @TextFileErrorcodeText VARCHAR(100)
+DECLARE @TextFileErrordescriptionText VARCHAR(100)
+DECLARE @TextFileSeparator VARCHAR(1)
+
+/*Set Constant Values*/
+SET @LateArrivingMessage = 'Late Arriving Transaction'
+SET @LateArrivingErrorCode = '99998'
+SET @ErrorMessageOtherTransactionType = 'Invalid Transaction Type - '
+SET @ErrorNumberOtherTransactionType ='99994'
+SET @ShortSpacing = SPACE(1)
+SET @TempTableCount  = 0
+SET @ODSProcessedDateTime = GETDATE()
+SET @IsRecordPresent = 1
+/* Is set to 1 to Initiate the process of selecting the records */
+SET @FinalErrorInsert ='N'
+SET @EntireRollback ='N'
+SET @GetInitialValueFlag = 'N'
+SET @TextFileBeginingText = '[ERROR]'
+SET @TextFileStagingIDText ='STAGING ID := '
+SET @TextFileProcessedDatetimeText ='PROCESSED DATE TIME := '
+SET @TextFileStagingTableText='STAGING TABLE NAME := '
+SET @TextFileErrorcodeText ='ERROR CODE := '
+SET @TextFileErrordescriptionText ='ERROR DESCRIPTION := '
+SET @TextFileSeparator = ','
+#GLOBAL - ENDS#
+
+/*Initializing Working Variables*/
+#SET1 - STARTS#
+SET @ODSActionFlag = NULL
+SET @ODSDeleteFlag =NULL
+SET @SourceOtherTransactionType = 0
+SET @ODSActionErrorCode = 0
+SET @ODSActionErrorMessage = NULL
+SET @SourceTransactionType = NULL
+SET @SourceAS400TransactionDateTime = NULL
+SET @StagingID = 0
+SET @TargetAS400TransationDateTime = NULL
+SET @DeleteAS400TransactionDateTime = NULL
+SET @ODSRecordExists = 'N'
+SET @ODSDeletedRecordExists = 'N'
+#SET1 - ENDS#

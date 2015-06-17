@@ -1,0 +1,22 @@
+/*Global Variables*/
+#GLOBAL - STARTS#
+/* Variables Declaration */
+DECLARE @ReconFlagDetailFirstLevelComparison SMALLINT
+DECLARE @ReconFlagDetailComparison SMALLINT
+DECLARE @ReconMismatchedRecordCount INT
+DECLARE @ReturnStatus VARCHAR(20)
+DECLARE @ReturnMessage VARCHAR(100)
+DECLARE @ReturnMessageDateTime VARCHAR(25)
+DECLARE @CurrentDateTime DATETIME
+DECLARE @CheckMinute INT
+
+/* Variables Initialization */
+SET @ReconFlagDetailFirstLevelComparison = 1  /* Detail-FirstLevelComparison within the Input Date Time Range */
+SET @ReconFlagDetailComparison = 2/* Detail-Comparison From Input StartDateTime Upto Current Datetime */
+SET @ReconMismatchedRecordCount = 0
+SET @ReturnStatus = NULL
+SET @ReturnMessage = NULL
+SET @ReturnMessageDateTime = NULL
+SET @CurrentDateTime = GETDATE()
+SET @CheckMinute = NULL
+#GLOBAL - ENDS#
